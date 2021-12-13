@@ -4,20 +4,28 @@ namespace Collections
 {
     public class User : IUser
     {
+        private uint? _age;
+        private string _fullName;
+        private string _username;
         public User(string fullName, string username, uint? age)
         {
-            throw new NotImplementedException("TODO ensure that username is not null");
-            throw new NotImplementedException("TODO initialise this instance of user accordingly");
+            _age = age;
+            _fullName = fullName;
+            _username = username;
+            if (_username == null)
+            {
+                throw new ArgumentException();
+            }
         }
-        
-        public uint? Age { get; }
-        
-        public string FullName { get; }
-        
-        public string Username { get; }
 
-        public bool IsAgeDefined => throw new NotImplementedException("TODO check whether age is non-null or not");
-        
+        public uint? Age { get => _age; }
+
+        public string FullName { get => _fullName; }
+
+        public string Username { get => _username; }
+
+        public bool IsAgeDefined => _age != null;
+
         // TODO implement missing methods (try to autonomously figure out which are the necessary methods)
     }
 }

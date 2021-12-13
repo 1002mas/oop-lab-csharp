@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Collections
@@ -6,27 +7,49 @@ namespace Collections
     public class SocialNetworkUser<TUser> : User, ISocialNetworkUser<TUser>
         where TUser : IUser
     {
+        private Dictionary<string, HashSet<TUser>> _friends = new Dictionary<string, HashSet<TUser>>();
         public SocialNetworkUser(string fullName, string username, uint? age) : base(fullName, username, age)
         {
-            throw new NotImplementedException("TODO is there anything to do here?");
         }
 
         public bool AddFollowedUser(string group, TUser user)
         {
-            throw new NotImplementedException("TODO add user to the provided group. Return false if the user was already in the group");
+            if (!_friends.ContainsKey(group))
+            {
+                _friends.Add(group, new HashSet<TUser>());
+            }
+            if(_friends[group].Contains(user))
+            {
+                return false;
+            }
+            _friends[group].Add(user);
+            return true;
         }
 
         public IList<TUser> FollowedUsers
         {
             get
             {
-                throw new NotImplementedException("TODO construct and return the list of all users followed by the current users, in all groups");
+                HashSet<TUser> friends = new HashSet<TUser>();
+                foreach (var group in _friends)
+                {
+                    foreach (var friend in group.Value)
+                    {
+                        friends.Add(friend);
+                    }
+                }
+                return new List<TUser>(friends);
             }
         }
 
         public ICollection<TUser> GetFollowedUsersInGroup(string group)
         {
-            throw new NotImplementedException("TODO construct and return a collection containing of all users followed by the current users, in group");
+            if (_friends.ContainsKey(group))
+            {
+                return new List<TUser>(_friends[group]);
+            }
+
+            return new List<TUser>();
         }
     }
 }
