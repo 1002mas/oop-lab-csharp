@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Collections
 {
@@ -26,6 +27,22 @@ namespace Collections
 
         public bool IsAgeDefined => _age != null;
 
-        // TODO implement missing methods (try to autonomously figure out which are the necessary methods)
+        public bool Equals(User other)
+        {
+            return _username == other._username;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((User) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (_username != null ? _username.GetHashCode() : 0);
+        }
     }
 }
