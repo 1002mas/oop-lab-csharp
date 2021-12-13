@@ -18,7 +18,6 @@ namespace OperatorsOverloading
             int[] res2 = { 3, 4, 4, 3 };
 
             List<int> lst1 = List.Append(lst.Tail.Tail, List.From(4, 3));
-
             // Look at this cast!
             // It is possible because of the conversion operator implemented in list
             // Because it is implicit, we can also remove the cast here
