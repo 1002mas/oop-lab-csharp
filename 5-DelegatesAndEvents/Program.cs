@@ -56,7 +56,6 @@ namespace DelegatesAndEvents
             };
 
             list[0] = 6;
-
             if (!(c1 && c2 && c3))
             {
                 throw new Exception("Wrong implementation");
