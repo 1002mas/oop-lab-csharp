@@ -5,31 +5,24 @@ namespace Collections
 {
     public class User : IUser
     {
-        private uint? _age;
-        private string _fullName;
-        private string _username;
         public User(string fullName, string username, uint? age)
         {
-            _age = age;
-            _fullName = fullName;
-            _username = username;
-            if (_username == null)
-            {
-                throw new ArgumentException();
-            }
+            Age = age;
+            FullName = fullName;
+            Username = username ?? throw new ArgumentException();
         }
 
-        public uint? Age { get => _age; }
+        public uint? Age { get; }
 
-        public string FullName { get => _fullName; }
+        public string FullName { get; }
 
-        public string Username { get => _username; }
+        public string Username { get; }
 
-        public bool IsAgeDefined => _age != null;
+        public bool IsAgeDefined => Age != null;
 
         public bool Equals(User other)
         {
-            return _username == other._username;
+            return Username == other.Username;
         }
 
         public override bool Equals(object obj)
@@ -42,7 +35,7 @@ namespace Collections
 
         public override int GetHashCode()
         {
-            return (_username != null ? _username.GetHashCode() : 0);
+            return (Username != null ? Username.GetHashCode() : 0);
         }
     }
 }
