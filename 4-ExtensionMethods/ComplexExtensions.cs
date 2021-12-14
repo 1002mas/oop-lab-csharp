@@ -41,12 +41,10 @@ namespace ExtensionMethods
         /// <param name="c1">the first operand.</param>
         /// <param name="c2">the second operand.</param>
         /// <returns>the quotient.</returns>
-        public static IComplex Divide(this IComplex c1, IComplex c2)
-        {
-            double squaredSum = c2.Real + c2.Imaginary;
-            return new Complex(((c1.Real * c2.Imaginary + c1.Imaginary * c2.Real) / squaredSum),
-                ((c1.Imaginary * c2.Real - c1.Real * c2.Imaginary) / squaredSum));
-        }
+        public static IComplex Divide(this IComplex c1, IComplex c2) =>
+            new Complex(((c1.Real * c2.Imaginary + c1.Imaginary * c2.Real) / Math.Pow(c2.Modulus, 2)),
+                ((c1.Imaginary * c2.Real - c1.Real * c2.Imaginary) / Math.Pow(c2.Modulus, 2)));
+
 
         /// <summary>
         /// Get the complex conjugate of a complex number.
@@ -72,10 +70,7 @@ namespace ExtensionMethods
         /// </remarks>
         /// <param name="c1">the complex operand.</param>
         /// <returns>the complex reciprocal.</returns>
-        public static IComplex Reciprocal(this IComplex c1)
-        {
-            double squaredSum = Math.Pow(c1.Real, 2) + Math.Pow(c1.Imaginary, 2);
-            return new Complex(c1.Real/squaredSum, -c1.Imaginary/squaredSum);
-        }
+        public static IComplex Reciprocal(this IComplex c1) =>
+            new Complex(c1.Real/Math.Pow(c1.Modulus, 2), -c1.Imaginary/Math.Pow(c1.Modulus, 2));
     }
 }

@@ -64,7 +64,7 @@ namespace OperatorsOverloading
         public static bool operator ==(List<TValue> list1, List<TValue> list2)
         {
 
-            if (Equals(list1, null) || Equals(list2, null))
+            if (list1 is null || list2 is null)
             {
                 if (Equals(list1, list2))
                 {
