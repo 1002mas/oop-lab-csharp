@@ -9,7 +9,7 @@ namespace DelegatesAndEvents
     /// <inheritdoc cref="IObservableList{T}" />
     public class ObservableList<TItem> : IObservableList<TItem>
     {
-        private List<TItem> _list = new List<TItem>();
+        private IList<TItem> _list = new List<TItem>();
         /// <inheritdoc cref="IObservableList{T}.ElementInserted" />
         public event ListChangeCallback<TItem> ElementInserted;
 
@@ -20,42 +20,22 @@ namespace DelegatesAndEvents
         public event ListElementChangeCallback<TItem> ElementChanged;
 
         /// <inheritdoc cref="ICollection{T}.Count" />
-        public int Count
-        {
-            get => _list.Count;
-        }
+        public int Count => _list.Count;
 
         /// <inheritdoc cref="ICollection{T}.IsReadOnly" />
-        public bool IsReadOnly
-        {
-            get => false;
-        }
+        public bool IsReadOnly => _list.IsReadOnly;
 
         /// <inheritdoc cref="IList{T}.this" />
         public TItem this[int index]
         {
-            get => _list.ToArray()[index];
+            get => _list[index];
             set
             {
                 if (index < Count)
                 {
-                    List<TItem> list = new List<TItem>();
-                    int i = 0;
-                    foreach (var elem in _list)
-                    {
-                        if (i == index)
-                        {
-                            list.Add(value);
-                            ElementChanged?.Invoke(this, value, elem, index);
-                        }
-                        else
-                        {
-                            list.Add(elem);
-                        }
-                        i++;
-                    }
-
-                    _list = list;
+                    TItem elem = _list[index];
+                    _list[index] = value;
+                    ElementChanged?.Invoke(this, value, elem, index);
                 }
             }
         }
@@ -65,10 +45,7 @@ namespace DelegatesAndEvents
 
 
         /// <inheritdoc cref="IEnumerable.GetEnumerator" />
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_list).GetEnumerator();
 
         /// <inheritdoc cref="ICollection{T}.Add" />
         public void Add(TItem item)
@@ -80,8 +57,8 @@ namespace DelegatesAndEvents
         /// <inheritdoc cref="ICollection{T}.Clear" />
         public void Clear()
         {
-            List<TItem> list = _list;
-            _list = new List<TItem>();
+            IList<TItem> list = new List<TItem>(_list);
+            _list.Clear();
             int i = 0;
             foreach (var elem in list)
             {
@@ -94,88 +71,35 @@ namespace DelegatesAndEvents
         public bool Contains(TItem item) => _list.Contains(item);
 
         /// <inheritdoc cref="ICollection{T}.CopyTo" />
-        public void CopyTo(TItem[] array, int arrayIndex)
-        {
-            if (arrayIndex < 0 || arrayIndex > array.Length)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-            if (Count > array.Length-arrayIndex)
-            {
-                throw new ArgumentException();
-            }
-            foreach (var elem in _list)
-            {
-                array[arrayIndex] = elem;
-                arrayIndex++;
-            }
-        }
+        public void CopyTo(TItem[] array, int arrayIndex) => _list.CopyTo(array, arrayIndex);
 
         /// <inheritdoc cref="ICollection{T}.Remove" />
         public bool Remove(TItem item)
         {
             int i = _list.IndexOf(item);
             bool ret = _list.Remove(item);
-            ElementRemoved?.Invoke(this, item, i);
+            if (ret)
+            {
+                ElementRemoved?.Invoke(this, item, i);
+            }
             return ret;
         }
 
         /// <inheritdoc cref="IList{T}.IndexOf" />
-        public int IndexOf(TItem item)
-        {
-            int i = 0;
-            foreach (var elem in _list)
-            {
-                if (elem.Equals(item))
-                {
-                    return i;
-                }
-
-                i++;
-            }
-
-            return -1;
-        }
+        public int IndexOf(TItem item) => _list.IndexOf(item);
 
         /// <inheritdoc cref="IList{T}.Insert" />
         public void Insert(int index, TItem item)
         {
-            List<TItem> list = new List<TItem>();
-            int i = 0;
-            foreach (var elem in list)
-            {
-                if (i == index)
-                {
-                    list.Add(item);
-                }
-                list.Add(elem);
-                i++;
-            }
-
-            _list = list;
+            _list.Insert(index, item);
             ElementInserted?.Invoke(this, item, index);
         }
 
         /// <inheritdoc cref="IList{T}.RemoveAt" />
         public void RemoveAt(int index)
         {
-            List<TItem> list = new List<TItem>();
-            int i = 0;
-            TItem item = default(TItem);
-            foreach (var elem in list)
-            {
-                if (i != index)
-                {
-                    list.Add(elem);
-                }
-                else
-                {
-                    item = elem;
-                }
-                i++;
-            }
-
-            _list = list;
+            TItem item = _list[index];
+            _list.RemoveAt(index);
             ElementRemoved?.Invoke(this, item, index);
         }
 
